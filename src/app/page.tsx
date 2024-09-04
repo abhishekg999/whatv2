@@ -1,20 +1,15 @@
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
 
-import App from './_components/App';
-import Header from './_components/Header';
-import { TimedMessageProvider } from './_contexts/TimedMessageContext';
+const EditorComp = dynamic(() => import('./_components/Editor'), { ssr: false });
+const id = "note";
 
-
-export default function Home() {
+export default function App() {
   return (
-    <TimedMessageProvider>
-      <div className="flex flex-col min-h-screen text-gray-50 bg-[rgb(17,_19,_31)]">
-        <Header />
-        <div className="flex flex-1">
-          {/* <Sidebar /> */}
-          <App />
-        </div>
-      </div>
-    </TimedMessageProvider>
-
+    <main className="flex flex-1 flex-col max-w-full">
+      <Suspense fallback={<div>loading...</div>}>
+        <EditorComp id={id} />
+      </Suspense>
+    </main>
   )
 }
