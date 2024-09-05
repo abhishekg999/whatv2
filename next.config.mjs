@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    transpilePackages: ['@mdxeditor/editor'],
+  transpilePackages: ["@mdxeditor/editor"],
 };
 
 export default nextConfig;

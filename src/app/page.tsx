@@ -1,7 +1,9 @@
-import dynamic from 'next/dynamic'
-import { Suspense } from 'react'
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
-const EditorComp = dynamic(() => import('./_components/Editor'), { ssr: false });
+const EditorComp = dynamic(() => import("./_components/Editor"), {
+  ssr: false,
+});
 const id = "note";
 
 export default function App() {
@@ -11,5 +13,5 @@ export default function App() {
         <EditorComp id={id} />
       </Suspense>
     </main>
-  )
+  );
 }

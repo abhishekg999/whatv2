@@ -1,32 +1,43 @@
-import { BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertCodeBlock, InsertTable, InsertThematicBreak, ListsToggle, Separator, StrikeThroughSupSubToggles, UndoRedo } from "@mdxeditor/editor"
-
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CodeToggle,
+  CreateLink,
+  InsertCodeBlock,
+  InsertTable,
+  InsertThematicBreak,
+  ListsToggle,
+  Separator,
+  StrikeThroughSupSubToggles,
+  UndoRedo,
+} from "@mdxeditor/editor";
 
 export const Toolbar = () => {
-    return (
-        <>
-            <UndoRedo />
-            <Separator />
-            <BoldItalicUnderlineToggles />
-            <CodeToggle />
-            <InsertCodeBlock />
-            <Separator />
+  return (
+    <>
+      <UndoRedo />
+      <Separator />
+      <BoldItalicUnderlineToggles />
+      <CodeToggle />
+      <InsertCodeBlock />
+      <Separator />
 
-            <BlockTypeSelect />
+      <BlockTypeSelect />
 
-            <Separator />
+      <Separator />
 
-            <StrikeThroughSupSubToggles />
-            <Separator />
-            <ListsToggle />
-            <Separator />
+      <StrikeThroughSupSubToggles />
+      <Separator />
+      <ListsToggle />
+      <Separator />
 
-            <CreateLink />
-            {/* <InsertImage /> */}
+      <CreateLink />
+      {/* <InsertImage /> */}
 
-            <Separator />
+      <Separator />
 
-            <InsertTable />
-            <InsertThematicBreak />
-        </>
-    )
-}
+      <InsertTable />
+      <InsertThematicBreak />
+    </>
+  );
+};

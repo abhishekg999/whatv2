@@ -1,14 +1,14 @@
 import { Loader, CheckCircle } from "lucide-react";
 export const SAVING_NOTE = (
-    <div className="flex items-center gap-2">
-        <span>Saving note...</span>
-        <Loader className="animate-spin w-4 h-4 mr-2" />
-    </div>
+  <div className="flex items-center gap-2">
+    <span>Saving note...</span>
+    <Loader className="animate-spin w-4 h-4 mr-2" />
+  </div>
 );
 
 export const SAVED_NOTE = (
-    <div className="flex items-center gap-2">
-        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-        <span>Note saved!</span>
-    </div>
+  <div className="flex items-center gap-2">
+    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+    <span>Note saved!</span>
+  </div>
 );

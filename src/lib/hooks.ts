@@ -13,7 +13,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   const setValue = (value: T | ((val: T) => T)) => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
@@ -26,9 +27,14 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
 export function useTimed<T>(defaultValue: T) {
   const [value, setValue] = useState<T>(defaultValue);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
-  const setTimedValue = (newVal: T | ((val: T) => T), timeout: number = Infinity) => {
+  const setTimedValue = (
+    newVal: T | ((val: T) => T),
+    timeout: number = Infinity,
+  ) => {
     // Clear the previous timeout
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;

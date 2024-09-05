@@ -1,6 +1,6 @@
 {
-  "id": "7c65bce2-cd8d-4306-8556-6762fc62aa49",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "9652637f-c5db-4e48-84c6-31f2c11e797c",
+  "prevId": "47dc04a1-3075-4b88-9f37-dd7e9150b45e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -33,9 +33,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
+        "owner": {
+          "name": "owner",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -56,12 +56,16 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "notes_user_id_users_id_fk": {
-          "name": "notes_user_id_users_id_fk",
+        "notes_owner_user_id_fk": {
+          "name": "notes_owner_user_id_fk",
           "tableFrom": "notes",
-          "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "tableTo": "user",
+          "columnsFrom": [
+            "owner"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -71,28 +75,72 @@
         "notes_note_id_unique": {
           "name": "notes_note_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["note_id"]
+          "columns": [
+            "note_id"
+          ]
         }
       }
     },
-    "public.users": {
-      "name": "users",
+    "public.session": {
+      "name": "session",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "email": {
-          "name": "email",
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "github_id": {
+          "name": "github_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -102,10 +150,19 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_github_id_unique": {
+          "name": "user_github_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "github_id"
+          ]
+        },
+        "user_username_unique": {
+          "name": "user_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
         }
       }
     }

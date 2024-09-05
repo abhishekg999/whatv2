@@ -2,7 +2,8 @@
 
 import { useLocalStorage } from "@/lib/hooks";
 import {
-  MDXEditor, MDXEditorMethods,
+  MDXEditor,
+  MDXEditorMethods,
   markdownShortcutPlugin,
   frontmatterPlugin,
   headingsPlugin,
@@ -21,9 +22,9 @@ import { Toolbar } from "./EditorToolbar";
 import { debounce } from "@/lib/utils";
 import { TimedMessageContext } from "../_contexts/TimedMessageContext";
 import { SAVED_NOTE, SAVING_NOTE } from "@/lib/snippets";
+import { updateNote } from "@/actions/noteActions";
 
 // import "@mdxeditor/editor/style.css";
-
 
 export const ALL_PLUGINS = [
   toolbarPlugin({ toolbarContents: () => <Toolbar /> }),
@@ -35,10 +36,18 @@ export const ALL_PLUGINS = [
   tablePlugin(),
   thematicBreakPlugin(),
   frontmatterPlugin(),
-  codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
-  codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'Plain Text', tsx: 'TypeScript', '': 'Unspecified' } }),
-  markdownShortcutPlugin()
-]
+  codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
+  codeMirrorPlugin({
+    codeBlockLanguages: {
+      js: "JavaScript",
+      css: "CSS",
+      txt: "Plain Text",
+      tsx: "TypeScript",
+      "": "Unspecified",
+    },
+  }),
+  markdownShortcutPlugin(),
+];
 
 interface EditorProps {
   id: string;
@@ -49,7 +58,7 @@ const defaultMarkdown = `
 # Welcome!
 
 Write something here.
-`
+`;
 
 /**
  * Extend this Component further with the necessary plugins or props you need.
@@ -59,27 +68,26 @@ const Editor: FC<EditorProps> = ({ id, editorRef }) => {
   const [content, setContent] = useLocalStorage(id, defaultMarkdown);
   const { setTimedValue } = useContext(TimedMessageContext);
 
+  const handleChange = debounce(async (content: string) => {
+    setTimedValue(SAVING_NOTE);
+    setContent(content);
+    setTimedValue(SAVED_NOTE, 2000);
+  }, 1000);
+
   return (
     <div className="flex flex-col justify-center align-middle mx-auto max-w-full">
-
       <Fragment>
         <MDXEditor
-          onChange={debounce((e: string) => {
-            setTimedValue(SAVING_NOTE);
-            setContent(e);
-            setTimedValue(SAVED_NOTE, 2000);
-          }, 1000)}
+          onChange={handleChange}
           ref={editorRef}
           markdown={content}
           plugins={ALL_PLUGINS}
           contentEditableClassName="prose prose-invert max-w-[80ch] mx-auto"
           className="dark-theme dark-editor scroll-p-16"
         />
-
       </Fragment>
     </div>
   );
 };
 
 export default Editor;
-

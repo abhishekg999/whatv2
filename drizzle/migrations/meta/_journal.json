@@ -8,6 +8,27 @@
       "when": 1725441850442,
       "tag": "0000_loud_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725516468535,
+      "tag": "0001_vengeful_malcolm_colcord",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725517484136,
+      "tag": "0002_modern_maverick",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725520184650,
+      "tag": "0003_long_kid_colt",
+      "breakpoints": true
     }
   ]
 }
