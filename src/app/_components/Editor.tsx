@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocalStorage } from "@/lib/hooks";
+import { useNoteLocalStorage } from "@/lib/hooks";
 import {
   MDXEditor,
   MDXEditorMethods,
@@ -21,10 +21,10 @@ import { FC, Fragment, useContext, useEffect } from "react";
 import { Toolbar } from "./EditorToolbar";
 import { debounce } from "@/lib/utils";
 import { TimedMessageContext } from "../_contexts/TimedMessageContext";
-import { SAVED_NOTE, SAVING_NOTE } from "@/lib/snippets";
+import { UserAuthContext } from "../_contexts/UserAuthContext";
+import { FAIL_SAVE_NOTE, NOT_LOGGED_IN, SAVED_NOTE, SAVING_NOTE } from "@/lib/snippets";
 import { updateNote } from "@/actions/noteActions";
-
-// import "@mdxeditor/editor/style.css";
+import { InsertNote } from "@/lib/note";
 
 export const ALL_PLUGINS = [
   toolbarPlugin({ toolbarContents: () => <Toolbar /> }),
@@ -50,29 +50,46 @@ export const ALL_PLUGINS = [
 ];
 
 interface EditorProps {
-  id: string;
+  note: InsertNote;
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
 }
 
-const defaultMarkdown = `
-# Welcome!
-
-Write something here.
-`;
-
-/**
- * Extend this Component further with the necessary plugins or props you need.
- * proxying the ref is necessary. Next.js dynamically imported components don't support refs.
- */
-const Editor: FC<EditorProps> = ({ id, editorRef }) => {
-  const [content, setContent] = useLocalStorage(id, defaultMarkdown);
+const Editor: FC<EditorProps> = ({ note, editorRef }) => {
+  console.log("Editor.tsx: EditorProps: ", note);
+  const [curNote, setCurNote] = useNoteLocalStorage("note", note);
   const { setTimedValue } = useContext(TimedMessageContext);
+  const user = useContext(UserAuthContext);
+
+  useEffect(() => {
+    const updateFirst = async () => {
+      if (user) {
+        await updateNote(curNote.content || "");
+        console.log("Editor.tsx: Updated note on first render.");
+      }
+    }
+    updateFirst();
+  }, []);
 
   const handleChange = debounce(async (content: string) => {
-    setTimedValue(SAVING_NOTE);
-    setContent(content);
-    setTimedValue(SAVED_NOTE, 2000);
-  }, 1000);
+    setTimedValue(<SAVING_NOTE/>);
+    setCurNote((note) => { return {
+      ...note, 
+      content, 
+      updatedAt: new Date(),
+    }});
+
+    if (user) {
+      const updatedNote = await updateNote(content);
+      if (!updatedNote.error) {
+        setTimedValue(<SAVED_NOTE/>, 4000);
+      } else {
+        setTimedValue(<FAIL_SAVE_NOTE/>, 4000);
+      }
+    } else {
+      setTimedValue(<NOT_LOGGED_IN/>, 4000);
+    }
+
+  }, 800);
 
   return (
     <div className="flex flex-col justify-center align-middle mx-auto max-w-full">
@@ -80,7 +97,7 @@ const Editor: FC<EditorProps> = ({ id, editorRef }) => {
         <MDXEditor
           onChange={handleChange}
           ref={editorRef}
-          markdown={content}
+          markdown={curNote.content || ""}
           plugins={ALL_PLUGINS}
           contentEditableClassName="prose prose-invert max-w-[80ch] mx-auto"
           className="dark-theme dark-editor scroll-p-16"

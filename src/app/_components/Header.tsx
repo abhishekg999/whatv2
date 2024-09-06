@@ -1,12 +1,17 @@
+import { lucia, validateRequest } from "@/auth";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { TimedDisplay } from "./TimedDisplay";
+import Link from "next/link";
 
-export default function Header() {
+export default async function Header() {
+  const { user } = await validateRequest();
   return (
     <header className="flex h-14 lg:h-[60px] justify-between gap-4 border-b bg-gray-800/40 px-4">
       <div className="flex h-[60px] items-center">
-        <a
+        <Link
           className="flex items-center justify-between gap-2 font-semibold"
-          href="#"
+          href="/"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -30,8 +35,45 @@ export default function Header() {
           <div className="flex items-center text-xs text-gray-500 px-2">
             <TimedDisplay />
           </div>
-        </a>
+        </Link>
       </div>
-    </header>
+      <div className="flex items-center gap-2">
+        {user ?
+          (
+            <>
+              <span className="text-gray-300">Hi, <strong>{user.username}</strong></span>
+              <form action={logout}>
+                <button>Sign out</button>
+              </form>
+            </>
+          ) : (
+            <Link href="/login" className="text-blue-400">
+              <button>Login</button>
+            </Link>
+          )}
+      </div>
+
+    </header >
   );
+}
+
+
+async function logout(): Promise<ActionResult> {
+  "use server";
+  const { session } = await validateRequest();
+  if (!session) {
+    return {
+      error: "Unauthorized"
+    };
+  }
+
+  await lucia.invalidateSession(session.id);
+
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  return redirect("/login");
+}
+
+interface ActionResult {
+  error: string | null;
 }

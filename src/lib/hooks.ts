@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { InsertNote } from "./note";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -23,6 +24,54 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   };
 
   return [storedValue, setValue] as const;
+}
+
+/**
+ * Sync the initialValue note with an existing note from localStorage if it exists.
+ */
+export function useNoteLocalStorage(key: string, defaultNote: InsertNote) {
+  const [storedValue, setStoredValue] = useState<InsertNote>(() => {
+
+    const item = window.localStorage.getItem(key);
+    if (!item) {
+      window.localStorage.setItem(key, JSON.stringify(defaultNote));
+      console.log("No note found in localStorage. Setting default note.", defaultNote);
+      return defaultNote;
+    }
+    const parsedItem: InsertNote = JSON.parse(item);
+    
+    console.log("Parsed item from localStorage: ", parsedItem);
+    console.log("Default note: ", defaultNote);
+
+    console.log("Parsed item updatedAt: ", new Date(parsedItem.updatedAt!));
+    console.log("Default note updatedAt: ", new Date(defaultNote.updatedAt!));
+
+    console.log("Parsed item updatedAt >= Default note updatedAt: ", new Date(parsedItem.updatedAt!) >= new Date(defaultNote.updatedAt!));
+
+    if (new Date(parsedItem.updatedAt!) >= new Date(defaultNote.updatedAt!)) {
+      // If the stored note is newer than the default note, return the stored note
+      console.log("Found newer note in localStorage. Using stored note.", parsedItem);
+      return parsedItem;
+    } else {
+    // Otherwise, set the stored note to the default note
+      window.localStorage.setItem(key, JSON.stringify(defaultNote));
+      console.log("Found older note in localStorage. Setting default note.", defaultNote);
+      return defaultNote;
+    }
+  });
+
+  const setValue = (value: InsertNote | ((val: InsertNote) => InsertNote)) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return [storedValue, setValue] as const;
+
 }
 
 export function useTimed<T>(defaultValue: T) {
@@ -52,3 +101,4 @@ export function useTimed<T>(defaultValue: T) {
 
   return [value, setTimedValue] as const;
 }
+

@@ -72,7 +72,7 @@ export async function GET(request: Request): Promise<Response> {
 	}
 }
 
-interface GitHubUser {
+export interface GitHubUser {
 	id: number;
 	login: string;
 }
