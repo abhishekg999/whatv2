@@ -1,6 +1,6 @@
 export default async function Page() {
 	return (
-		<div className="m-auto flex flex-col items-center gap-16">
+		<div className="m-auto mt-24 flex flex-col items-center gap-16">
 			<span className="text-4xl">OAuth Login</span>
 			<a href="/login/github">
 				<div className="bg-gray-900 text-gray-100 hover:text-white shadow font-bold text-sm py-3 px-4 rounded flex justify-start items-center cursor-pointer w-64 mt-2">

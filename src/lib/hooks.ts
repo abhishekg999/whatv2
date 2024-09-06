@@ -39,15 +39,6 @@ export function useNoteLocalStorage(key: string, defaultNote: InsertNote) {
       return defaultNote;
     }
     const parsedItem: InsertNote = JSON.parse(item);
-    
-    console.log("Parsed item from localStorage: ", parsedItem);
-    console.log("Default note: ", defaultNote);
-
-    console.log("Parsed item updatedAt: ", new Date(parsedItem.updatedAt!));
-    console.log("Default note updatedAt: ", new Date(defaultNote.updatedAt!));
-
-    console.log("Parsed item updatedAt >= Default note updatedAt: ", new Date(parsedItem.updatedAt!) >= new Date(defaultNote.updatedAt!));
-
     if (new Date(parsedItem.updatedAt!) >= new Date(defaultNote.updatedAt!)) {
       // If the stored note is newer than the default note, return the stored note
       console.log("Found newer note in localStorage. Using stored note.", parsedItem);

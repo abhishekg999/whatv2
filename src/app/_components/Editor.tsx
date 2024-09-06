@@ -60,12 +60,6 @@ const Editor: FC<EditorProps> = ({ note, editorRef }) => {
   const { setTimedValue } = useContext(TimedMessageContext);
   const user = useContext(UserAuthContext);
 
-  if (user) {
-    updateNote(curNote.content || "").then(() => {
-      console.log("Editor.tsx: Updated note on first render.");
-    });
-  }
-
   const handleChange = debounce(async (content: string) => {
     setTimedValue(<SAVING_NOTE/>);
     setCurNote((note) => { return {

@@ -7,7 +7,7 @@ import Link from "next/link";
 export default async function Header() {
   const { user } = await validateRequest();
   return (
-    <header className="flex h-14 lg:h-[60px] justify-between gap-4 border-b bg-gray-800/40 px-4">
+    <header className="flex h-14 lg:h-[60px] justify-between gap-2 border-b bg-gray-800/40 px-4 text-sm md:text-base lg:text-lg">
       <div className="flex h-[60px] items-center">
         <Link
           className="flex items-center justify-between gap-2 font-semibold"
@@ -33,7 +33,9 @@ export default async function Header() {
           <span className="">Notepad</span>
 
           <div className="flex items-center text-xs text-gray-500 px-2">
-            <TimedDisplay />
+            <div className="flex items-center gap-2">
+              <TimedDisplay />
+            </div>
           </div>
         </Link>
       </div>
@@ -41,9 +43,9 @@ export default async function Header() {
         {user ?
           (
             <>
-              <span className="text-gray-300">Hi, <strong>{user.username}</strong></span>
+              <span className="text-gray-300"><strong>{user.username}</strong></span>
               <form action={logout}>
-                <button>Sign out</button>
+                <button>Logout</button>
               </form>
             </>
           ) : (
