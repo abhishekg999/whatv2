@@ -6,5 +6,5 @@ export default async function Page() {
 	if (!user) {
 		return redirect("/login");
 	}
-	return <h1>Hi, {JSON.stringify(user)}!</h1>;
+	return <h1>Hi, {user.username}!</h1>;
 }

@@ -17,7 +17,7 @@ import {
   codeBlockPlugin,
   codeMirrorPlugin,
 } from "@mdxeditor/editor";
-import { FC, Fragment, useContext, useEffect } from "react";
+import { FC, Fragment, useContext } from "react";
 import { Toolbar } from "./EditorToolbar";
 import { debounce } from "@/lib/utils";
 import { TimedMessageContext } from "../_contexts/TimedMessageContext";
@@ -60,15 +60,11 @@ const Editor: FC<EditorProps> = ({ note, editorRef }) => {
   const { setTimedValue } = useContext(TimedMessageContext);
   const user = useContext(UserAuthContext);
 
-  useEffect(() => {
-    const updateFirst = async () => {
-      if (user) {
-        await updateNote(curNote.content || "");
-        console.log("Editor.tsx: Updated note on first render.");
-      }
-    }
-    updateFirst();
-  }, []);
+  if (user) {
+    updateNote(curNote.content || "").then(() => {
+      console.log("Editor.tsx: Updated note on first render.");
+    });
+  }
 
   const handleChange = debounce(async (content: string) => {
     setTimedValue(<SAVING_NOTE/>);
