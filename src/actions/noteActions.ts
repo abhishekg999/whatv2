@@ -3,6 +3,7 @@
 import { validateRequest } from "@/auth";
 import { db } from "@/db/drizzle";
 import { notes } from "@/db/schema";
+import { defaultNoteContent } from "@/lib/note";
 import { eq, InferSelectModel } from "drizzle-orm";
 
 export type NoteError = {
@@ -24,7 +25,7 @@ export async function getOrCreateNote(): Promise<NoteError | SelectNote> {
   if (result.length === 0) {
     const note = await db.insert(notes).values({
       owner: user.id,
-      content: `# Welcome!\n\nWrite something here.\n`
+      content: defaultNoteContent
     }).returning();
 
     if (note.length === 0) {
@@ -33,7 +34,12 @@ export async function getOrCreateNote(): Promise<NoteError | SelectNote> {
       }
     }
 
-    return { error: null, ...note[0] };
+    return { 
+      error: null, 
+      ...note[0], 
+      // Inform the client that this note was just created
+      updatedAt: new Date(0) 
+    };
   }
 
   return { error: null, ...result[0] };

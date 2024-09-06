@@ -17,14 +17,14 @@ import {
   codeBlockPlugin,
   codeMirrorPlugin,
 } from "@mdxeditor/editor";
-import { FC, Fragment, useContext } from "react";
+import { FC, Fragment, useContext, useEffect, useRef } from "react";
 import { Toolbar } from "./EditorToolbar";
 import { debounce } from "@/lib/utils";
 import { TimedMessageContext } from "../_contexts/TimedMessageContext";
 import { UserAuthContext } from "../_contexts/UserAuthContext";
 import { FAIL_SAVE_NOTE, NOT_LOGGED_IN, SAVED_NOTE, SAVING_NOTE } from "@/lib/snippets";
 import { updateNote } from "@/actions/noteActions";
-import { InsertNote } from "@/lib/note";
+import { defaultNoteContent, InsertNote } from "@/lib/note";
 
 export const ALL_PLUGINS = [
   toolbarPlugin({ toolbarContents: () => <Toolbar /> }),
@@ -55,39 +55,42 @@ interface EditorProps {
 }
 
 const Editor: FC<EditorProps> = ({ note, editorRef }) => {
-  console.log("Editor.tsx: EditorProps: ", note);
   const [curNote, setCurNote] = useNoteLocalStorage("note", note);
   const { setTimedValue } = useContext(TimedMessageContext);
   const user = useContext(UserAuthContext);
 
-  const handleChange = debounce(async (content: string) => {
-    setTimedValue(<SAVING_NOTE/>);
-    setCurNote((note) => { return {
-      ...note, 
-      content, 
-      updatedAt: new Date(),
-    }});
+  const handleChange = useRef(debounce(async (content: string) => {
+    setTimedValue(<SAVING_NOTE />);
+    setCurNote((note) => {
+      return {
+        ...note,
+        content,
+        updatedAt: new Date(),
+      }
+    });
 
     if (user) {
       const updatedNote = await updateNote(content);
       if (!updatedNote.error) {
-        setTimedValue(<SAVED_NOTE/>, 4000);
+        setTimedValue(<SAVED_NOTE />, 2000);
       } else {
-        setTimedValue(<FAIL_SAVE_NOTE/>, 4000);
+        setTimedValue(<FAIL_SAVE_NOTE />, 2000);
       }
     } else {
-      setTimedValue(<NOT_LOGGED_IN/>, 4000);
+      setTimedValue(<NOT_LOGGED_IN />, 2000);
     }
 
-  }, 800);
+  }, 800));
 
   return (
     <div className="flex flex-col justify-center align-middle mx-auto max-w-full">
       <Fragment>
         <MDXEditor
-          onChange={handleChange}
+          onChange={(content) => {
+            handleChange.current(content);
+          }}
           ref={editorRef}
-          markdown={curNote.content || ""}
+          markdown={curNote.content || defaultNoteContent}
           plugins={ALL_PLUGINS}
           contentEditableClassName="prose prose-invert max-w-[80ch] mx-auto"
           className="dark-theme dark-editor scroll-p-16"

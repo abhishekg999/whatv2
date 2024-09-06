@@ -1,53 +1,26 @@
 import { useState, useRef } from "react";
 import { InsertNote } from "./note";
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(error);
-      return initialValue;
-    }
-  });
-
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return [storedValue, setValue] as const;
-}
-
 /**
  * Sync the initialValue note with an existing note from localStorage if it exists.
+ * Precendence: 
+ * 1. User note from server
+ * 2. Updated local note
+ * 3. Default note from server
  */
-export function useNoteLocalStorage(key: string, defaultNote: InsertNote) {
+export function useNoteLocalStorage(key: string, serverNote: InsertNote) {
   const [storedValue, setStoredValue] = useState<InsertNote>(() => {
-
-    const item = window.localStorage.getItem(key);
-    if (!item) {
-      window.localStorage.setItem(key, JSON.stringify(defaultNote));
-      console.log("No note found in localStorage. Setting default note.", defaultNote);
-      return defaultNote;
+    // If there is an existing note on the server, use it.
+    if (new Date(serverNote.updatedAt!).getTime() !== 0) {
+      window.localStorage.setItem(key, JSON.stringify(serverNote));
+      return serverNote;
     }
-    const parsedItem: InsertNote = JSON.parse(item);
-    if (new Date(parsedItem.updatedAt!) >= new Date(defaultNote.updatedAt!)) {
-      // If the stored note is newer than the default note, return the stored note
-      console.log("Found newer note in localStorage. Using stored note.", parsedItem);
-      return parsedItem;
-    } else {
-    // Otherwise, set the stored note to the default note
-      window.localStorage.setItem(key, JSON.stringify(defaultNote));
-      console.log("Found older note in localStorage. Setting default note.", defaultNote);
-      return defaultNote;
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : serverNote;
+    } catch (error) {
+      console.error(error);
+      return serverNote;
     }
   });
 
