@@ -47,6 +47,12 @@ export async function updateNote(content: string) {
     };
   }
 
+  if (typeof content !== "string" || content.length >= 1_000_000) {
+    return {
+      error: "Content too long",
+    };
+  }
+
   const result = await db.update(notes).set({
     content
   }).where(eq(notes.owner, user.id)).returning();
