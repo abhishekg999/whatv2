@@ -39,11 +39,11 @@ export default async function Header() {
           </div>
         </Link>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4 text-sm">
         {user ?
           (
             <>
-              <span className="text-gray-300"><strong>{user.username}</strong></span>
+              <span className="text-gray-300 hidden sm:inline-block"><strong>{user.username}</strong></span>
               <form action={logout}>
                 <button>Logout</button>
               </form>

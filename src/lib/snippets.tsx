@@ -1,3 +1,5 @@
+"use client";
+
 import { Loader, CheckCircle, CircleX, CircleAlert } from "lucide-react";
 export const SAVING_NOTE = () => (
   <>
@@ -16,14 +18,14 @@ export const SAVED_NOTE = () => (
 export const FAIL_SAVE_NOTE = () => (
   <>
     <CircleX className="w-4 h-4 text-red-500 mr-2" />
-    <span>Note saved locally, failed to save note remotely.</span>
+    <span>Failed to save note remotely.</span>
   </>
 )
 
 export const NOT_LOGGED_IN = () => (
   <>
     <CircleAlert className="w-4 h-4 text-yellow-500 mr-2" />
-    <span>Note saved locally, login to sync notes.</span>
+    <span>Note saved locally.</span>
   </>
 )
 

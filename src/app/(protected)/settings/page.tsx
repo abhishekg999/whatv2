@@ -6,5 +6,9 @@ export default async function Page() {
 	if (!user) {
 		return redirect("/login");
 	}
-	return <h1>Hi, {user.username}!</h1>;
+	return (
+		<h1 className="mx-auto pt-8">
+			Hi, {user.username}!
+		</h1>
+	);
 }
