@@ -147,6 +147,17 @@ button:focus-visible {
   @apply mx-auto
 }
 
+/* Fix text start css with absolute ::before element */
+._listItemChecked_1tncs_73, 
+._listItemUnchecked_1tncs_74 {
+  @apply flex flex-row items-center -translate-x-2;
+}
+
+._listItemChecked_1tncs_73::before, 
+._listItemUnchecked_1tncs_74::before {
+  @apply !relative mr-4
+} 
+
 .prose :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
