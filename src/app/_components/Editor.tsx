@@ -83,7 +83,7 @@ const Editor: FC<EditorProps> = ({ note, editorRef }) => {
   }, 800));
 
   return (
-    <div className="flex flex-col justify-center align-middle mx-auto max-w-full">
+    <div className="flex flex-col flex-1 w-full min-h-0">
       <Fragment>
         <MDXEditor
           onChange={(content) => {
@@ -92,8 +92,8 @@ const Editor: FC<EditorProps> = ({ note, editorRef }) => {
           ref={editorRef}
           markdown={curNote.content || defaultNoteContent}
           plugins={ALL_PLUGINS}
-          contentEditableClassName="prose prose-invert max-w-[80ch] mx-auto"
-          className="dark-theme dark-editor scroll-p-16"
+          contentEditableClassName="prose prose-invert max-w-[110ch] mx-auto"
+          className="dark-theme dark-editor scroll-p-16 h-full"
         />
       </Fragment>
     </div>

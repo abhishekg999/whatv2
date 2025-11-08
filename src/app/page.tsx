@@ -37,7 +37,7 @@ export default async function App() {
   }
 
   return (
-    <main className="flex flex-1 flex-col max-w-full">
+    <main className="flex flex-1 flex-col w-full min-h-0">
       <Suspense fallback={null}>
         <UserAuthProvider user={user}>
           <EditorComp note={serverNote} />
