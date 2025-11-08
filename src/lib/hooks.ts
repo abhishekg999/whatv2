@@ -1,41 +1,64 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { InsertNote } from "./note";
 
 /**
  * Sync the initialValue note with an existing note from localStorage if it exists.
- * Precendence: 
+ * Precendence:
  * 1. User note from server
  * 2. Updated local note
  * 3. Default note from server
  */
 export function useNoteLocalStorage(key: string, serverNote: InsertNote) {
   const [storedValue, setStoredValue] = useState<InsertNote>(() => {
-    // If there is an existing note on the server, use it.
     if (new Date(serverNote.updatedAt!).getTime() !== 0) {
-      window.localStorage.setItem(key, JSON.stringify(serverNote));
+      try {
+        window.localStorage.setItem(key, JSON.stringify(serverNote));
+      } catch (error) {
+        console.error("Failed to save server note to localStorage:", error);
+      }
       return serverNote;
     }
+
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : serverNote;
+      if (!item) return serverNote;
+
+      const parsed = JSON.parse(item);
+      if (!parsed || typeof parsed !== "object" || !("content" in parsed)) {
+        console.warn("Invalid localStorage data, clearing");
+        window.localStorage.removeItem(key);
+        return serverNote;
+      }
+
+      return parsed;
     } catch (error) {
-      console.error(error);
+      console.error("Failed to parse localStorage, clearing:", error);
+      try {
+        window.localStorage.removeItem(key);
+      } catch (clearError) {
+        console.error("Failed to clear localStorage:", clearError);
+      }
       return serverNote;
     }
   });
 
   const setValue = (value: InsertNote | ((val: InsertNote) => InsertNote)) => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
-      console.error(error);
+      console.error("Failed to save to localStorage:", error);
+      try {
+        window.localStorage.removeItem(key);
+      } catch (clearError) {
+        console.error("Failed to clear localStorage:", clearError);
+      }
     }
   };
 
   return [storedValue, setValue] as const;
-
 }
 
 export function useTimed<T>(defaultValue: T) {
@@ -65,4 +88,3 @@ export function useTimed<T>(defaultValue: T) {
 
   return [value, setTimedValue] as const;
 }
-

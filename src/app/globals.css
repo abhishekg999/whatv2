@@ -134,8 +134,88 @@ button:focus-visible {
 }
 
 .mdxeditor-root-contenteditable {
-  max-width: 110ch;
+  max-width: 95ch;
   @apply mx-auto
+}
+
+.mdxeditor-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+[data-radix-select-viewport] {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: #404040 transparent;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-thumb {
+  background-color: #404040;
+  border-radius: 4px;
+}
+
+.mdxeditor-popup-container {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+
+._dialogOverlay_199q2_1 {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+._dialogContent_199q2_18 {
+  background-color: #242424 !important;
+  border: 1px solid #333333 !important;
+  color: #e8e8e8 !important;
+}
+
+._dialogContent_199q2_18 input {
+  background-color: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  color: #e8e8e8 !important;
+  padding: 0.5rem !important;
+  border-radius: 3px !important;
+}
+
+._dialogContent_199q2_18 input:focus {
+  outline: 2px solid #67d78e !important;
+  outline-offset: 2px !important;
+  border-color: #67d78e !important;
+}
+
+._dialogContent_199q2_18 button {
+  background-color: #2a2a2a !important;
+  border: 1px solid #333333 !important;
+  color: #e8e8e8 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 3px !important;
+  cursor: pointer !important;
+}
+
+._dialogContent_199q2_18 button:hover {
+  background-color: #333333 !important;
+}
+
+._dialogContent_199q2_18 button[data-primary="true"] {
+  background-color: #67d78e !important;
+  color: #1a1a1a !important;
+  border-color: #67d78e !important;
+}
+
+._dialogContent_199q2_18 button[data-primary="true"]:hover {
+  background-color: #58c77d !important;
 }
 
 /* Fix text start css with absolute ::before element */
@@ -152,4 +232,14 @@ button:focus-visible {
 .prose :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
+}
+
+.prose p + p {
+  margin-top: 1em !important;
+}
+
+.prose br {
+  content: "";
+  display: block;
+  margin-top: 1em;
 }

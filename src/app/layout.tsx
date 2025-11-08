@@ -5,9 +5,9 @@ import "./globals.css";
 import Header from "./_components/Header";
 import { TimedMessageProvider } from "./_contexts/TimedMessageContext";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  display: 'swap',
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,9 +26,7 @@ export default function RootLayout({
         <TimedMessageProvider>
           <div className="flex flex-col min-h-screen text-foreground bg-background">
             <Header />
-            <div className="flex flex-1">
-              {children}
-            </div>
+            <div className="flex flex-1">{children}</div>
           </div>
         </TimedMessageProvider>
       </body>

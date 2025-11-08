@@ -60,12 +60,8 @@
           "name": "notes_owner_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -75,9 +71,7 @@
         "notes_note_id_unique": {
           "name": "notes_note_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "note_id"
-          ]
+          "columns": ["note_id"]
         }
       }
     },
@@ -110,12 +104,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -153,16 +143,12 @@
         "user_github_id_unique": {
           "name": "user_github_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "github_id"
-          ]
+          "columns": ["github_id"]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       }
     }

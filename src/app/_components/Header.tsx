@@ -8,10 +8,7 @@ export default async function Header() {
   const { user } = await validateRequest();
   return (
     <header className="flex h-14 items-center bg-background-secondary px-6 relative">
-      <Link
-        className="flex items-center gap-3 text-foreground"
-        href="/"
-      >
+      <Link className="flex items-center gap-3 text-foreground" href="/">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           strokeMiterlimit="10"
@@ -32,43 +29,51 @@ export default async function Header() {
         <span className="text-base font-semibold">Notepad</span>
       </Link>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-foreground-secondary font-medium">
         <TimedDisplay />
       </div>
 
       <div className="flex items-center gap-3 text-sm ml-auto">
-        {user ?
-          (
-            <>
-              <span className="text-foreground-secondary hidden sm:inline-block text-sm">{user.username}</span>
-              <form action={logout}>
-                <button className="bg-background-tertiary text-foreground-secondary px-3 py-1.5 text-sm">Logout</button>
-              </form>
-            </>
-          ) : (
-            <Link href="/login">
-              <button className="bg-accent text-background px-4 py-1.5 text-sm font-medium">Login</button>
-            </Link>
-          )}
+        {user ? (
+          <>
+            <span className="text-foreground-secondary hidden sm:inline-block text-sm">
+              {user.username}
+            </span>
+            <form action={logout}>
+              <button className="bg-background-tertiary text-foreground-secondary px-3 py-1.5 text-sm">
+                Logout
+              </button>
+            </form>
+          </>
+        ) : (
+          <Link href="/login">
+            <button className="bg-accent text-background px-4 py-1.5 text-sm font-medium">
+              Login
+            </button>
+          </Link>
+        )}
       </div>
-    </header >
+    </header>
   );
 }
-
 
 async function logout(): Promise<ActionResult> {
   "use server";
   const { session } = await validateRequest();
   if (!session) {
     return {
-      error: "Unauthorized"
+      error: "Unauthorized",
     };
   }
 
   await lucia.invalidateSession(session.id);
 
   const sessionCookie = lucia.createBlankSessionCookie();
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
   return redirect("/login");
 }
 

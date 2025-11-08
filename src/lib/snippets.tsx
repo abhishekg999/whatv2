@@ -1,31 +1,38 @@
 "use client";
 
-import { Loader, CheckCircle, CircleX, CircleAlert } from "lucide-react";
+import { Loader, Check, X, Save } from "lucide-react";
+
+const formatTime = (date: Date) => {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+};
+
 export const SAVING_NOTE = () => (
   <>
-    <span>Saving note...</span>
-    <Loader className="animate-spin w-4 h-4 mr-2" />
+    <Loader className="animate-spin w-4 h-4" />
+    <span>Saving...</span>
   </>
 );
 
-export const SAVED_NOTE = () => (
+export const SAVED_NOTE = ({ time }: { time?: Date } = {}) => (
   <>
-    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-    <span>Note saved!</span>
+    <Check className="w-4 h-4 text-accent" />
+    <span>Synced {time ? formatTime(time) : ""}</span>
   </>
 );
 
 export const FAIL_SAVE_NOTE = () => (
   <>
-    <CircleX className="w-4 h-4 text-red-500 mr-2" />
-    <span>Failed to save note remotely.</span>
+    <X className="w-4 h-4 text-red-400" />
+    <span>Sync failed</span>
   </>
-)
+);
 
-export const NOT_LOGGED_IN = () => (
+export const NOT_LOGGED_IN = ({ time }: { time?: Date } = {}) => (
   <>
-    <CircleAlert className="w-4 h-4 text-yellow-500 mr-2" />
-    <span>Note saved locally.</span>
+    <Save className="w-4 h-4 text-foreground-secondary" />
+    <span>Saved {time ? formatTime(time) : ""}</span>
   </>
-)
-
+);

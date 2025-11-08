@@ -12,7 +12,7 @@ You can use Markdown syntax to format your text using the toolbar above.
 ---
 By default notes are saved in LocalStorage.
 If you would like to save notes across devices, you can login via GitHub.
-`
+`;
 
 export type InsertNote = InferInsertModel<typeof notes>;
 export function createDefaultNote(): InsertNote {
