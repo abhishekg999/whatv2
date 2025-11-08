@@ -12,13 +12,8 @@ const EditorComp = dynamic(() => import("./_components/Editor"), {
 export default async function App() {
   const { user } = await validateRequest();
 
-  // serverNote acts as a note from a remote source. 
-  // If the user is authenticated, it will be populated with the note from the server.
-  // Otherwise it will be populated with a default note created at Date(0)
-  let serverNote: InsertNote;
+  let serverNote: InsertNote = createDefaultNote();
 
-  // If the user is logged in, check if they have a note. If not, create one.
-  // Pass the note to the editor.
   if (user) {
     const note = await getOrCreateNote();
     if (!note.error) {
@@ -28,16 +23,12 @@ export default async function App() {
         content: selectNote.content,
         createdAt: selectNote.createdAt,
         updatedAt: selectNote.updatedAt,
-      }
-    } else {
-      serverNote = createDefaultNote();
+      };
     }
-  } else {
-    serverNote = createDefaultNote();
   }
 
   return (
-    <main className="flex flex-1 flex-col max-w-full">
+    <main className="flex flex-1 flex-col w-full min-h-0">
       <Suspense fallback={null}>
         <UserAuthProvider user={user}>
           <EditorComp note={serverNote} />

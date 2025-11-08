@@ -1,30 +1,36 @@
 "use client";
 
+import { updateNote } from "@/actions/noteActions";
 import { useNoteLocalStorage } from "@/lib/hooks";
+import { defaultNoteContent, InsertNote } from "@/lib/note";
 import {
-  MDXEditor,
-  MDXEditorMethods,
-  markdownShortcutPlugin,
+  FAIL_SAVE_NOTE,
+  NOT_LOGGED_IN,
+  SAVED_NOTE,
+  SAVING_NOTE,
+} from "@/lib/snippets";
+import { debounce } from "@/lib/utils";
+import {
+  codeBlockPlugin,
+  codeMirrorPlugin,
+  diffSourcePlugin,
   frontmatterPlugin,
   headingsPlugin,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
+  markdownShortcutPlugin,
+  MDXEditor,
+  MDXEditorMethods,
   quotePlugin,
   tablePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
-  codeBlockPlugin,
-  codeMirrorPlugin,
 } from "@mdxeditor/editor";
-import { FC, Fragment, useContext, useEffect, useRef } from "react";
-import { Toolbar } from "./EditorToolbar";
-import { debounce } from "@/lib/utils";
+import { FC, useContext, useEffect, useRef } from "react";
 import { TimedMessageContext } from "../_contexts/TimedMessageContext";
 import { UserAuthContext } from "../_contexts/UserAuthContext";
-import { FAIL_SAVE_NOTE, NOT_LOGGED_IN, SAVED_NOTE, SAVING_NOTE } from "@/lib/snippets";
-import { updateNote } from "@/actions/noteActions";
-import { defaultNoteContent, InsertNote } from "@/lib/note";
+import { Toolbar } from "./EditorToolbar";
 
 export const ALL_PLUGINS = [
   toolbarPlugin({ toolbarContents: () => <Toolbar /> }),
@@ -36,14 +42,56 @@ export const ALL_PLUGINS = [
   tablePlugin(),
   thematicBreakPlugin(),
   frontmatterPlugin(),
+  diffSourcePlugin({ viewMode: "rich-text" }),
   codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
   codeMirrorPlugin({
     codeBlockLanguages: {
+      "": "Plain Text",
       js: "JavaScript",
+      jsx: "JavaScript (JSX)",
+      ts: "TypeScript",
+      tsx: "TypeScript (TSX)",
       css: "CSS",
-      txt: "Plain Text",
-      tsx: "TypeScript",
-      "": "Unspecified",
+      scss: "SCSS",
+      sass: "Sass",
+      less: "Less",
+      html: "HTML",
+      xml: "XML",
+      json: "JSON",
+      yaml: "YAML",
+      markdown: "Markdown",
+      python: "Python",
+      java: "Java",
+      c: "C",
+      cpp: "C++",
+      csharp: "C#",
+      go: "Go",
+      rust: "Rust",
+      ruby: "Ruby",
+      php: "PHP",
+      swift: "Swift",
+      kotlin: "Kotlin",
+      scala: "Scala",
+      r: "R",
+      matlab: "MATLAB",
+      sql: "SQL",
+      bash: "Bash",
+      powershell: "PowerShell",
+      perl: "Perl",
+      lua: "Lua",
+      dart: "Dart",
+      elixir: "Elixir",
+      erlang: "Erlang",
+      haskell: "Haskell",
+      clojure: "Clojure",
+      dockerfile: "Dockerfile",
+      graphql: "GraphQL",
+      toml: "TOML",
+      ini: "INI",
+      diff: "Diff",
+      vue: "Vue",
+      svelte: "Svelte",
+      astro: "Astro",
     },
   }),
   markdownShortcutPlugin(),
@@ -59,43 +107,61 @@ const Editor: FC<EditorProps> = ({ note, editorRef }) => {
   const { setTimedValue } = useContext(TimedMessageContext);
   const user = useContext(UserAuthContext);
 
-  const handleChange = useRef(debounce(async (content: string) => {
-    setTimedValue(<SAVING_NOTE />);
-    setCurNote((note) => {
-      return {
+  useEffect(() => {
+    const lastUpdate = curNote.updatedAt
+      ? new Date(curNote.updatedAt)
+      : new Date();
+    setTimedValue(
+      user ? (
+        <SAVED_NOTE time={lastUpdate} />
+      ) : (
+        <NOT_LOGGED_IN time={lastUpdate} />
+      ),
+    );
+  }, []);
+
+  const handleChange = useRef(
+    debounce(async (content: string) => {
+      const now = new Date();
+      setCurNote((note) => ({
         ...note,
         content,
-        updatedAt: new Date(),
-      }
-    });
+        updatedAt: now,
+      }));
 
-    if (user) {
-      const updatedNote = await updateNote(content);
-      if (!updatedNote.error) {
-        setTimedValue(<SAVED_NOTE />, 2000);
+      if (user) {
+        setTimedValue(<SAVING_NOTE />);
+        const updatedNote = await updateNote(content);
+        if (!updatedNote.error) {
+          setTimedValue(<SAVED_NOTE time={now} />);
+        } else {
+          setTimedValue(<FAIL_SAVE_NOTE />);
+        }
       } else {
-        setTimedValue(<FAIL_SAVE_NOTE />, 2000);
+        setTimedValue(<NOT_LOGGED_IN time={now} />);
       }
-    } else {
-      setTimedValue(<NOT_LOGGED_IN />, 2000);
-    }
+    }, 800),
+  );
 
-  }, 800));
+  const handleContainerClick = (e: React.MouseEvent) => {
+    if (editorRef?.current && e.target === e.currentTarget) {
+      editorRef.current.focus();
+    }
+  };
 
   return (
-    <div className="flex flex-col justify-center align-middle mx-auto max-w-full">
-      <Fragment>
-        <MDXEditor
-          onChange={(content) => {
-            handleChange.current(content);
-          }}
-          ref={editorRef}
-          markdown={curNote.content || defaultNoteContent}
-          plugins={ALL_PLUGINS}
-          contentEditableClassName="prose prose-invert max-w-[80ch] mx-auto"
-          className="dark-theme dark-editor scroll-p-16"
-        />
-      </Fragment>
+    <div
+      className="flex flex-col flex-1 w-full min-h-0 cursor-text"
+      onClick={handleContainerClick}
+    >
+      <MDXEditor
+        onChange={(content) => handleChange.current(content)}
+        ref={editorRef}
+        markdown={curNote.content || defaultNoteContent}
+        plugins={ALL_PLUGINS}
+        contentEditableClassName="prose prose-invert max-w-[95ch] mx-auto min-h-[calc(100vh-8rem)] pt-6"
+        className="dark-theme dark-editor scroll-p-16 h-full"
+      />
     </div>
   );
 };

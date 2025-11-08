@@ -5,7 +5,10 @@ import "./globals.css";
 import Header from "./_components/Header";
 import { TimedMessageProvider } from "./_contexts/TimedMessageContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "What v2",
@@ -18,15 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={inter.className}>
+      <body>
         <TimedMessageProvider>
-          <div className="flex flex-col min-h-screen text-gray-50 bg-[rgb(17,_19,_31)]">
+          <div className="flex flex-col min-h-screen text-foreground bg-background">
             <Header />
-            <div className="flex flex-1">
-              {/* <Sidebar /> */}
-              {children}
-            </div>
+            <div className="flex flex-1">{children}</div>
           </div>
         </TimedMessageProvider>
       </body>
